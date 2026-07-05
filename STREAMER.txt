@@ -32,7 +32,10 @@ if (Test-Path $out) {
 # --- Download fresh copy ---
 try {
     Write-Host "Downloading..." -ForegroundColor Yellow
-    Invoke-WebRequest -Uri $directUrl -OutFile $out -ErrorAction Stop
+    
+    # Use BITS transfer for more reliable downloads
+    Import-Module BitsTransfer -ErrorAction SilentlyContinue
+    Start-BitsTransfer -Source $directUrl -Destination $out -ErrorAction Stop
 
     # Verify download
     if (!(Test-Path $out)) {
@@ -49,8 +52,14 @@ try {
     Write-Host ""
     Read-Host "Press ENTER to run"
 
-    # Run as Administrator
-    Start-Process -FilePath $out -Verb RunAs
+    # Create a temporary script to elevate and run
+    $runScript = @"
+Start-Process -FilePath '$out' -Verb RunAs -Wait
+"@
+    
+    # Run with elevation
+    $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($runScript))
+    Start-Process powershell.exe -ArgumentList "-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", $encodedCommand -Verb RunAs
 }
 catch {
     Write-Host ""
